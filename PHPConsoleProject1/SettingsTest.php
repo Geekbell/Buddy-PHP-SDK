@@ -1,8 +1,17 @@
 <?php
 
 spl_autoload_register(function ($class_name) {
-    include $class_name . '.php';
+    if ($class_name == "Config_Lite")
+    {
+        include 'Config\Lite.php';
+    }
+    else
+    {
+        include $class_name . '.php';
+    }
 });
+
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite");
 
 class SettingsTest extends PHPUnit_Framework_TestCase
 {
@@ -11,14 +20,14 @@ class SettingsTest extends PHPUnit_Framework_TestCase
     const SERVICE_ROOT = "sr";
     const ACCESS_TOKEN = "at";
 
-    /*public function setUp()
+    public function setUp()
     {
         $config = new Config_Lite(Settings::CFG_NAME);
 
         $config->clear();
 
         $config->save();
-    }*/
+    }
 
     public function testGetDefaultServiceRoot()
 	{
