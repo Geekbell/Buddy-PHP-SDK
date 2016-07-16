@@ -10,7 +10,8 @@
     <RootNamespace>
     </RootNamespace>
     <ProjectTypeGuids>{A0786B88-2ADB-4C21-ABE8-AA2D79766269}</ProjectTypeGuids>
-    <StartupFile>AccessToken.php</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <Runtime>PHP</Runtime>
     <RuntimeVersion>5.4</RuntimeVersion>
     <SaveServerSettingsInUserFile>false</SaveServerSettingsInUserFile>
@@ -27,6 +28,8 @@
   <ItemGroup>
     <Compile Include="AccessToken.php" />
     <Compile Include="AccessTokenTest.php" />
+    <Compile Include="Settings.php" />
+    <Compile Include="SettingsTest.php" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="composer.json" />
