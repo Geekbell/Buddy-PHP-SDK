@@ -13,7 +13,7 @@ spl_autoload_register(function ($class_name) {
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite");
 
-class SettingsTest extends PHPUnit_Framework_TestCase
+class SettingsTest extends BaseTest
 {
     const APP_ID = "a";
     const DEFAULT_SERVICE_ROOT = "https://api.buddyplatform.com";
@@ -31,44 +31,49 @@ class SettingsTest extends PHPUnit_Framework_TestCase
 
     public function testGetDefaultServiceRoot()
 	{
-        $settings = new Settings(SettingsTest::APP_ID);
+        $settings = new Settings(self::APP_ID);
 
 		$this->assertEquals(self::DEFAULT_SERVICE_ROOT, $settings->getServiceRoot());
 	}
 
-    /*
-     *     def test_Settings_access_token(self):
-        settings = Settings(Test3._app_id)
+    public function testSettingsAccessToken()
+	{
+        $settings = new Settings(self::APP_ID);
 
-        json = {"accessToken": Test3._access_token,
-                "accessTokenExpires": self.future_javascript_access_token_expires(),
-                "serviceRoot": Test3._service_root}
+        $json = $this->getJson(1);
 
-        settings.set_device_token(json)
+        $settings->setDeviceToken($json);
 
-        self.assertEqual(settings.access_token_string, Test3._access_token)
+		$this->assertEquals($settings->getAccessTokenString(), SettingsTest::ACCESS_TOKEN);
+	}
 
-    def test_Settings_access_token_expired(self):
-        settings = Settings(Test3._app_id)
+    private function getJson($days)
+    {
+        return ["accessToken" => self::ACCESS_TOKEN,
+               "accessTokenExpires" => $this->jsonExpiresTicksFromDays($days),
+               "serviceRoot" => self::SERVICE_ROOT];
+    }
 
-        json = {"accessToken": Test3._access_token,
-                "accessTokenExpires": self.past_javascript_access_token_expires(),
-                "serviceRoot": Test3._service_root}
+    public function testSettingsAccessTokenExpired()
+	{
+        $settings = new Settings(self::APP_ID);
 
-        settings.set_device_token(json)
+        $json = $this->getJson(-1);
 
-        self.assertEqual(settings.access_token_string, None)
+        $settings->setDeviceToken($json);
 
-    def test_Settings_save_load(self):
+		$this->assertNull($settings->getAccessTokenString());
+	}
 
-        # pre-load Settings with a different test
-        self.test_Settings_access_token()
+    public function testSettingsSaveLoad()
+	{
+        $this->testSettingsAccessToken();
 
-        settings = Settings(Test3._app_id)
+        $settings = new Settings(self::APP_ID);
 
-        self.assertEqual(settings.access_token_string, Test3._access_token)
-        self.assertEqual(settings.service_root, Test3._service_root)
-        */
+		$this->assertEquals($settings->getAccessTokenString(), self::ACCESS_TOKEN);
+		$this->assertEquals($settings->getServiceRoot(), self::SERVICE_ROOT);
+	}
 }
 
 ?>
