@@ -31,13 +31,29 @@ class HttpTest extends BaseTest
         $config->save();
     }
 
-    public function test()
+    public function testGetDeviceAccessTokenString()
 	{
         $http = new Http(new Settings(self::US_APP_ID), self::US_APP_KEY);
 
-        $accessTokenString = $http->getAccessTokenString();
+        $deviceAccessTokenString = $http->getAccessTokenString();
 
-        $this->assertNotNull($accessTokenString);
+        $this->assertNotNull($deviceAccessTokenString);
+	}
+
+
+    public function testLoginLogoutUser()
+	{
+        $http = new Http(new Settings(self::US_APP_ID), self::US_APP_KEY);
+
+        $deviceAccessTokenString = $http->getAccessTokenString();
+        $this->assertNotNull($deviceAccessTokenString);
+
+        $userResponse = $http->loginUser("test", "12341234");
+        $this->assertNotNull($userResponse);
+
+        $http->logoutUser();
+        $deviceAccessTokenString2 = $http->getAccessTokenString();
+        $this->assertEqual($deviceAccessTokenString, $deviceAccessTokenString2);
 	}
 }
 ?>

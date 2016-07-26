@@ -1,16 +1,7 @@
 <?php
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
 
-/**
- * Http short summary.
- *
- * Http description.
- *
- * @version 1.0
- * @author bradleysserbus
- */
 class Http
 {
     private $settings;
@@ -41,14 +32,14 @@ class Http
 
     private function registerDevice()
     {
-        $response = $this->handleDictionaryRequests('POST', "/devices", ['json' => [
+        $response = $this->handleDictionaryRequests('POST', "/devices", [
             "appId" =>  $this->settings->getAppId(),
             "appKey" =>  $this->appKey,
             "platform" =>  PHP_OS,
             "model" =>  "",
             "osVersion" =>  "",
             "uniqueId" =>  $this->settings->getUniqueId(),
-        ]]);
+        ]);
 
         if (!in_array(self::EXCEPTION_NAME, $response))
         {
@@ -58,34 +49,29 @@ class Http
 
     private function handleDictionaryRequests($verb, $path, $dictionary, $file = null)
     {
-        $dictionary = $this->handleLastLocation($dictionary);
-
-        $url = $this->getUrl($path);
+        $dictionary = ['json' => $dictionary];
 
         if ($file != null)
         {
             $dictionary['multipart'] = [['data' => ["data" => $file]]];
         }
 
-        return $this->handleRequest($verb, $url, $dictionary);
+        return $this->handleRequest($verb, $path, $dictionary);
     }
 
-    private function getUrl($path)
+    private function handleParametersRequests($verb, $path, $parameters)
     {
-        $url = $this->settings->getServiceRoot();
+        $dictionary = [['params' => $parameters]];
 
-        $url->setPath($path);
-
-        return $url;
+        return $this->handleRequest($verb, $path, $dictionary);
     }
 
-    private function handleLastLocation($dictionary)
+    private function handleRequest($verb, $path, $dictionary)
     {
-        return $dictionary;
-    }
+        $this->handleLastLocation($dictionary);
 
-    private function handleRequest($verb, $url, $dictionary)
-    {
+        $url = $this->getUrl($path);
+
         $response = null;
 
         try
@@ -97,9 +83,89 @@ class Http
         }
         catch (Exception $ex)
         {
-
+            $response = [EXCEPTION_NAME => $ex];
         }
 
-        return $response == null ? null : $response->json();
+        return $response == null ? [EXCEPTION_NAME => new GuzzleHttp\Exception\TransferException()] : $response->json();
+    }
+
+    private function handleLastLocation($dictionary)
+    {
+        return $dictionary;
+    }
+
+    private function getUrl($path)
+    {
+        $url = $this->settings->getServiceRoot();
+
+        $url->setPath($path);
+
+        return $url;
+    }
+
+    public function get($path, $parameters)
+    {
+        return $this->handleParametersRequests('GET', $path, $parameters);
+    }
+
+    public function delete($path, $parameters)
+    {
+        return $this->handleParametersRequests('DELETE', $path, $parameters);
+    }
+
+    public function patch($path, $parameters)
+    {
+        return $this->handleDictionaryRequests('PATCH', $path, $parameters);
+    }
+
+    public function post($path, $parameters)
+    {
+        return $this->handleDictionaryRequests('POST', $path, $parameters);
+    }
+
+    public function put($path, $parameters)
+    {
+        return $this->handleDictionaryRequests('PUT', $path, $parameters);
+    }
+
+    public function createUser($userName, $password, $firstName=null, $lastName=null, $email=null, $gender=null, $dateOfBirth=null, $tag=null)
+    {
+        $response = $this->post("/users", [
+            "username" => $userName,
+            "password" => $password,
+            "firstName" => $firstName,
+            "lastName" => $lastName,
+            "email" => $email,
+            "gender" => $gender,
+            "dateOfBirth"=> $dateOfBirth,
+            "tag" =>$tag
+        ]);
+
+        if (!in_array(self::EXCEPTION_NAME, $response))
+        {
+            $this->settings->setUser($response[self::RESULT_NAME]);
+        }
+
+        return $response;
+    }
+
+    public function loginUser($userName, $password)
+    {
+        $response = $this->post("/users/login", [
+            "username" => $userName,
+            "password" => $password
+        ]);
+
+        if (!in_array(self::EXCEPTION_NAME, $response))
+        {
+            $this->settings->setUser($response[self::RESULT_NAME]);
+        }
+
+        return $response;
+    }
+
+    public function logoutUser()
+    {
+        $this->settings->setUser(null);
     }
 }
