@@ -29,6 +29,8 @@
     <Compile Include="AccessToken.php" />
     <Compile Include="AccessTokenTest.php" />
     <Compile Include="BaseTest.php" />
+    <Compile Include="Http.php" />
+    <Compile Include="HttpTest.php" />
     <Compile Include="Settings.php" />
     <Compile Include="SettingsTest.php" />
   </ItemGroup>

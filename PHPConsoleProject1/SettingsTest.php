@@ -3,7 +3,7 @@
 spl_autoload_register(function ($class_name) {
     if ($class_name == "Config_Lite")
     {
-        include 'Config\Lite.php';
+        include 'Lite.php';
     }
     else
     {
@@ -12,6 +12,7 @@ spl_autoload_register(function ($class_name) {
 });
 
 set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite");
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite\\Config");
 
 class SettingsTest extends BaseTest
 {
@@ -33,7 +34,9 @@ class SettingsTest extends BaseTest
 	{
         $settings = new Settings(self::APP_ID);
 
-		$this->assertEquals(self::DEFAULT_SERVICE_ROOT, $settings->getServiceRoot());
+        $serviceRoot = $settings->getServiceRoot();
+
+		$this->assertEquals(self::DEFAULT_SERVICE_ROOT, $serviceRoot);
 	}
 
     public function testSettingsAccessToken()

@@ -2,20 +2,25 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use GuzzleHttp\Url;
+
 class Settings
 {
     const CFG_NAME = "buddy.cfg";
     const SERVICE_ROOT_NAME = "service_root";
+    const UNIQUE_ID_NAME = "unique_id";
     const DEVICE_TOKEN_NAME = "device";
     const USER_TOKEN_NAME = "user";
     const USER_ID_NAME = "user_id";
-    const UNIQUE_ID_NAME = "unique_id";
     const DEFAULT_SERVICE_ROOT = "https://api.buddyplatform.com";
     const ACCESS_TOKEN_NAME_SUFFIX = "_access_token";
     const ACCESS_TOKEN_EXPIRES_NAME_SUFFIX = "_access_token_expires";
     const SERVICE_ROOT_JSON_NAME = "serviceRoot";
     const ACCESS_TOKEN_JSON_NAME = "accessToken";
     const ACCESS_TOKEN_EXPIRES_JSON_NAME = "accessTokenExpires";
+
+    private $appId;
+    private $config;
 
     public function __construct($appId)
     {
@@ -24,16 +29,35 @@ class Settings
         $this->config = new Config_Lite(self::CFG_NAME);
     }
 
+    public function getUniqueId()
+    {
+        $uniqueId  = $this->get(self::UNIQUE_ID_NAME);
+
+        if ($uniqueId == null)
+        {
+            $uniqueId = uniqid("", true);
+
+            $this->set(self::UNIQUE_ID_NAME, $uniqueId);
+        }
+
+        return $uniqueId;
+    }
+
+    public function getAppId()
+    {
+        return $this->appId;
+    }
+
     public function getServiceRoot()
     {
         $serviceRoot  = $this->get(self::SERVICE_ROOT_NAME);
 
         if ($serviceRoot == null)
         {
-            return self::DEFAULT_SERVICE_ROOT;
+            $serviceRoot = self::DEFAULT_SERVICE_ROOT;
         }
 
-        return $serviceRoot;
+        return Url::fromString($serviceRoot);
     }
 
     public function getDeviceToken()
@@ -137,7 +161,10 @@ class Settings
 
     public function remove($name)
     {
-        $this->config->remove($name);
+        if ($this->config->has($this->appId, $name))
+        {       
+            $this->config->remove($this->appId, $name);
+        }
     }
 
     public function save()

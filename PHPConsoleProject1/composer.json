@@ -1,6 +1,8 @@
 {
 	"require": {
 		"phpunit/phpunit": "^4.8",
-		"pear/config_lite": "dev-master"
+		"pear/config_lite": "dev-master",
+		"guzzlehttp/guzzle": "^5.3",
+		"phpsysinfo/phpsysinfo": "^3.2"
 	}
 }
