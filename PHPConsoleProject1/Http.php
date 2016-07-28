@@ -32,14 +32,25 @@ class Http
 
     private function registerDevice()
     {
-        $response = $this->handleDictionaryRequests('POST', "/devices", [
+        $url = $this->getUrl("/devices");
+
+        $response = null;
+
+        try
+        {
+            $response = $this->client->post($url, ['json' => [
             "appId" =>  $this->settings->getAppId(),
             "appKey" =>  $this->appKey,
             "platform" =>  PHP_OS,
             "model" =>  "",
             "osVersion" =>  "",
             "uniqueId" =>  $this->settings->getUniqueId(),
-        ]);
+        ], "verify" => false]);
+        }
+        catch (Exception $ex)
+        { }
+
+        $response = $response->json();
 
         if (!in_array(self::EXCEPTION_NAME, $response))
         {
@@ -68,7 +79,9 @@ class Http
 
     private function handleRequest($verb, $path, $dictionary)
     {
-        $this->handleLastLocation($dictionary);
+        $dictionary = $this->handleAuthentication($dictionary);
+
+        $dictionary = $this->handleLastLocation($dictionary);
 
         $url = $this->getUrl($path);
 
@@ -94,6 +107,23 @@ class Http
         return $dictionary;
     }
 
+    private function handleAuthentication($dictionary)
+    {
+        if ($this->settings->getAccessTokenString() == null)
+        {
+            $this->registerDevice();
+        }
+
+        $accessToken = $this->settings->getAccessTokenString();
+
+        if ($accessToken != null)
+        {
+            $dictionary["headers"] = [ "Authorization" => "Buddy " . $accessToken];
+        }
+
+        return $dictionary;
+    }
+
     private function getUrl($path)
     {
         $url = $this->settings->getServiceRoot();
@@ -105,27 +135,27 @@ class Http
 
     public function get($path, $parameters)
     {
-        return $this->handleParametersRequests('GET', $path, $parameters);
+        return $this->handleParametersRequests('get', $path, $parameters);
     }
 
     public function delete($path, $parameters)
     {
-        return $this->handleParametersRequests('DELETE', $path, $parameters);
+        return $this->handleParametersRequests('delete', $path, $parameters);
     }
 
     public function patch($path, $parameters)
     {
-        return $this->handleDictionaryRequests('PATCH', $path, $parameters);
+        return $this->handleDictionaryRequests('path', $path, $parameters);
     }
 
     public function post($path, $parameters)
     {
-        return $this->handleDictionaryRequests('POST', $path, $parameters);
+        return $this->handleDictionaryRequests('post', $path, $parameters);
     }
 
     public function put($path, $parameters)
     {
-        return $this->handleDictionaryRequests('PUT', $path, $parameters);
+        return $this->handleDictionaryRequests('put', $path, $parameters);
     }
 
     public function createUser($userName, $password, $firstName=null, $lastName=null, $email=null, $gender=null, $dateOfBirth=null, $tag=null)

@@ -50,10 +50,12 @@ class HttpTest extends BaseTest
 
         $userResponse = $http->loginUser("test", "12341234");
         $this->assertNotNull($userResponse);
+        $userAccessTokenString = $http->getAccessTokenString();
+        $this->assertTrue($deviceAccessTokenString != $userAccessTokenString);
 
         $http->logoutUser();
         $deviceAccessTokenString2 = $http->getAccessTokenString();
-        $this->assertEqual($deviceAccessTokenString, $deviceAccessTokenString2);
+        $this->assertEquals($deviceAccessTokenString, $deviceAccessTokenString2);
 	}
 }
 ?>

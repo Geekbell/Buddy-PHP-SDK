@@ -12,6 +12,7 @@ class Settings
     const DEVICE_TOKEN_NAME = "device";
     const USER_TOKEN_NAME = "user";
     const USER_ID_NAME = "user_id";
+    const USER_ID_JSON_NAME = "id";
     const DEFAULT_SERVICE_ROOT = "https://api.buddyplatform.com";
     const ACCESS_TOKEN_NAME_SUFFIX = "_access_token";
     const ACCESS_TOKEN_EXPIRES_NAME_SUFFIX = "_access_token_expires";
@@ -118,6 +119,22 @@ class Settings
         $this->save();
     }
 
+    public function setUser($response)
+    {
+        $this->setAccessToken(self::USER_TOKEN_NAME, $response);
+
+        if ($response == null)
+        {
+            $this->remove(self::USER_ID_NAME);
+        }
+        else
+        {
+            $this->set(self::USER_ID_NAME, $response[self::USER_ID_JSON_NAME]);
+        }
+
+        $this->save();
+    }
+
     public function setAccessToken($settingsTokenName, $result)
     {
         if ($result == null)
@@ -162,7 +179,7 @@ class Settings
     public function remove($name)
     {
         if ($this->config->has($this->appId, $name))
-        {       
+        {
             $this->config->remove($this->appId, $name);
         }
     }
