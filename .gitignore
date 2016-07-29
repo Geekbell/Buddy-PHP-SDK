@@ -85,3 +85,8 @@ Deployment/Bin/PhpNetXmlDom.dll
 Deployment/Bin/PhpNetXmlDom.xml
 Deployment/Bin/PhpNetZip.dll
 Deployment/Bin/System.Data.SQLite.dll
+
+vendor/
+SDK/composer.lock
+.vs/
+buddy.cfg
