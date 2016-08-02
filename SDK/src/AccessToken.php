@@ -1,5 +1,9 @@
 <?php
 
+namespace Buddy;
+
+require_once 'vendor/autoload.php';
+
 class AccessToken
 {
     private $token;
@@ -13,7 +17,7 @@ class AccessToken
 
     public function getToken()
     {
-        if ($this->token ==  null || $this->token == "" || $this->expires < new DateTime('now', new DateTimeZone('UTC')))
+        if ($this->token ==  null || $this->token == "" || $this->expires < new \DateTime('now', new \DateTimeZone('UTC')))
             return null;
         else
             return $this->token;
@@ -27,11 +31,11 @@ class AccessToken
     public function setExpires($ticks)
     {
         if ($ticks == null || $ticks == "")
-            $this->expires = new DateTime('now', new DateTimeZone('UTC'));
+            $this->expires = new DateTime('now', new \DateTimeZone('UTC'));
         else
         {
             $timestamp = $ticks / 1000;
-            $this->expires = new DateTime();
+            $this->expires = new \DateTime('now', new \DateTimeZone('UTC'));
             $this->expires->setTimestamp($timestamp);
         }
     }

@@ -1,8 +1,23 @@
 {
-	"require": {
-		"phpunit/phpunit": "^4.8",
-		"pear/config_lite": "dev-master",
-		"guzzlehttp/guzzle": "^5.3",
-		"phpsysinfo/phpsysinfo": "^3.2"
-	}
+  "require": {
+    "pear/config_lite": "dev-master",
+    "guzzlehttp/guzzle": "^5.3",
+    "phpsysinfo/phpsysinfo": "^3.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Buddy\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Buddy\\Tests\\": "tests/"
+    }
+  },
+  "exclude-from-classmap": [
+    "/tests/"
+  ]
 }

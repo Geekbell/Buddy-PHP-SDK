@@ -1,6 +1,8 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+namespace Buddy;
+
+require_once 'vendor/autoload.php';
 
 use GuzzleHttp\Url;
 
@@ -27,7 +29,7 @@ class Settings
     {
         $this->appId = $appId;
 
-        $this->config = new Config_Lite(self::CFG_NAME);
+        $this->config = new \Config_Lite(self::CFG_NAME);
     }
 
     public function getUniqueId()

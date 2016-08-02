@@ -1,20 +1,12 @@
 <?php
 
-spl_autoload_register(function ($class_name) {
-    if ($class_name == "Config_Lite")
-    {
-        include 'Lite.php';
-    }
-    else
-    {
-        include $class_name . '.php';
-    }
-});
+namespace Buddy\Tests;
 
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite");
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite\\Config");
+use Buddy\Settings;
 
-class SettingsTest extends BaseTest
+require_once 'vendor/autoload.php';
+
+class SettingsTest extends \PHPUnit_Framework_TestCase
 {
     const APP_ID = "a";
     const DEFAULT_SERVICE_ROOT = "https://api.buddyplatform.com";
@@ -23,7 +15,7 @@ class SettingsTest extends BaseTest
 
     public function setUp()
     {
-        $config = new Config_Lite(Settings::CFG_NAME);
+        $config = new \Config_Lite(Settings::CFG_NAME);
 
         $config->clear();
 
@@ -53,7 +45,7 @@ class SettingsTest extends BaseTest
     private function getJson($days)
     {
         return ["accessToken" => self::ACCESS_TOKEN,
-               "accessTokenExpires" => $this->jsonExpiresTicksFromDays($days),
+               "accessTokenExpires" => TestHelper::jsonExpiresTicksFromDays($days),
                "serviceRoot" => self::SERVICE_ROOT];
     }
 

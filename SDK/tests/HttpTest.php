@@ -1,21 +1,13 @@
 <?php
 
-spl_autoload_register(function ($class_name) {
-    if ($class_name == "Config_Lite")
-    {
-        include 'Lite.php';
-    }
-    else
-    {
-        include $class_name . '.php';
-    }
-});
+namespace Buddy\Tests;
 
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite");
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\pear\\config_lite\Config");
-set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . "\\vendor\\guzzlehttp\\guzzle");
+use Buddy\Http;
+use Buddy\Settings;
 
-class HttpTest extends BaseTest
+require_once 'vendor/autoload.php';
+
+class HttpTest extends \PHPUnit_Framework_TestCase
 {
     const US_APP_ID = "bbbbbc.swCBKKNNvBrkc";
     const US_APP_KEY = "667c8432-f3d6-6b8a-a660-855f5807f830";
@@ -26,7 +18,7 @@ class HttpTest extends BaseTest
 
     public function setUp()
     {
-        $config = new Config_Lite(Settings::CFG_NAME);
+        $config = new \Config_Lite(Settings::CFG_NAME);
         $config->clear();
         $config->save();
     }
