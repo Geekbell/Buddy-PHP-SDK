@@ -25,7 +25,7 @@ class HttpTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDeviceAccessTokenString()
 	{
-        $http = new Http(new Settings(self::US_APP_ID), self::US_APP_KEY);
+        $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
 
         $deviceAccessTokenString = $http->getAccessTokenString();
 
@@ -35,7 +35,7 @@ class HttpTest extends \PHPUnit_Framework_TestCase
 
     public function testLoginLogoutUser()
 	{
-        $http = new Http(new Settings(self::US_APP_ID), self::US_APP_KEY);
+        $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
 
         $deviceAccessTokenString = $http->getAccessTokenString();
         $this->assertNotNull($deviceAccessTokenString);

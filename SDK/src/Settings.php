@@ -2,9 +2,9 @@
 
 namespace Buddy;
 
-require_once 'vendor/autoload.php';
-
 use GuzzleHttp\Url;
+
+require_once 'vendor/autoload.php';
 
 class Settings
 {
@@ -23,11 +23,15 @@ class Settings
     const ACCESS_TOKEN_EXPIRES_JSON_NAME = "accessTokenExpires";
 
     private $appId;
+    private $appKey;
     private $config;
+    private $lastLocation;
 
-    public function __construct($appId)
+    public function __construct($appId, $appKey)
     {
         $this->appId = $appId;
+
+        $this->appKey = $appKey;
 
         $this->config = new \Config_Lite(self::CFG_NAME);
     }
@@ -49,6 +53,11 @@ class Settings
     public function getAppId()
     {
         return $this->appId;
+    }
+
+    public function getAppKey()
+    {
+        return $this->appKey;
     }
 
     public function getServiceRoot()
@@ -152,6 +161,16 @@ class Settings
         }
     }
 
+    public function getLastLocation()
+    {
+        return $this->lastLocation;
+    }
+
+    public function setLastLocation($value)
+    {
+        $this->lastLocation = $value;
+    }
+
     private function ticksFromJavaScriptDatetime($dt)
     {
         $output = [];
@@ -161,12 +180,12 @@ class Settings
         return $output[1];
     }
 
-    public function set($name, $value)
+    private function set($name, $value)
     {
         $this->config->set($this->appId, $name, $value);
     }
 
-    public function get($name)
+    private function get($name)
     {
         if ($this->config->has($this->appId, $name))
         {
@@ -178,7 +197,7 @@ class Settings
         }
     }
 
-    public function remove($name)
+    private function remove($name)
     {
         if ($this->config->has($this->appId, $name))
         {
@@ -186,7 +205,7 @@ class Settings
         }
     }
 
-    public function save()
+    private function save()
     {
         $this->config->save();
     }

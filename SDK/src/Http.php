@@ -2,26 +2,26 @@
 
 namespace Buddy;
 
-require_once 'vendor/autoload.php';
-
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception;
+
+require_once 'vendor/autoload.php';
 
 class Http
 {
     private $settings;
-    private $appKey;
     private $client;
+
+    private $lastLocation;
 
     const EXCEPTION_NAME = "exception";
     const RESULT_NAME = "result";
 
-    public function __construct($settings, $appKey)
+    public function __construct($settings)
     {
         $this->settings = $settings;
 
-        $this->appKey = $appKey;
-
-        $this->client = new Client();
+        $this->client = new \GuzzleHttp\Client();
     }
 
     public function getAccessTokenString()
@@ -40,16 +40,15 @@ class Http
 
         $response = null;
 
-        try
-        {
+        try {
             $response = $this->client->post($url, ['json' => [
-            "appId" =>  $this->settings->getAppId(),
-            "appKey" =>  $this->appKey,
-            "platform" =>  PHP_OS,
-            "model" =>  "",
-            "osVersion" =>  "",
-            "uniqueId" =>  $this->settings->getUniqueId(),
-        ], "verify" => false]);
+                "appId" => $this->settings->getAppId(),
+                "appKey" => $this->settings->getAppKey(),
+                "platform" => PHP_OS,
+                "model" => "",
+                "osVersion" => "",
+                "uniqueId" => $this->settings->getUniqueId(),
+            ], "verify" => false]);
         }
         catch (Exception $ex)
         { }
@@ -68,6 +67,8 @@ class Http
 
         if ($file != null)
         {
+            # TODO: this needs to be verified
+            throw new BadMethodCallException();
             $dictionary['multipart'] = [['data' => ["data" => $file]]];
         }
 
@@ -76,7 +77,7 @@ class Http
 
     private function handleParametersRequests($verb, $path, $parameters)
     {
-        $dictionary = [['params' => $parameters]];
+        $dictionary = ['query' => $parameters];
 
         return $this->handleRequest($verb, $path, $dictionary);
     }
@@ -91,23 +92,28 @@ class Http
 
         $response = null;
 
-        try
-        {
+        try {
             # TODO: turn on SSL validation
             $dictionary['verify'] = false;
 
             $response = $this->client->$verb($url, $dictionary);
         }
-        catch (Exception $ex)
-        {
+        catch (Exception $ex) {
             $response = [EXCEPTION_NAME => $ex];
         }
 
-        return $response == null ? [EXCEPTION_NAME => new GuzzleHttp\Exception\TransferException()] : $response->json();
+        return $response == null ? [EXCEPTION_NAME => new \GuzzleHttp\Exception\TransferException()] : $response->json();
     }
 
     private function handleLastLocation($dictionary)
     {
+        $lastLocation = $this->settings->getLastLocation();
+
+        if ($lastLocation != null)
+        {
+            $dictionary["location"] = $lastLocation;
+        }
+
         return $dictionary;
     }
 

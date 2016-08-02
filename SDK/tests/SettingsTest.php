@@ -8,7 +8,8 @@ require_once 'vendor/autoload.php';
 
 class SettingsTest extends \PHPUnit_Framework_TestCase
 {
-    const APP_ID = "a";
+    const APP_ID = "ai";
+    const APP_KEY = "ak";
     const DEFAULT_SERVICE_ROOT = "https://api.buddyplatform.com";
     const SERVICE_ROOT = "sr";
     const ACCESS_TOKEN = "at";
@@ -24,7 +25,7 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefaultServiceRoot()
 	{
-        $settings = new Settings(self::APP_ID);
+        $settings = new Settings(self::APP_ID, self::APP_KEY);
 
         $serviceRoot = $settings->getServiceRoot();
 
@@ -33,7 +34,7 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
 
     public function testSettingsAccessToken()
 	{
-        $settings = new Settings(self::APP_ID);
+        $settings = new Settings(self::APP_ID, self::APP_KEY);
 
         $json = $this->getJson(1);
 
@@ -51,7 +52,7 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
 
     public function testSettingsAccessTokenExpired()
 	{
-        $settings = new Settings(self::APP_ID);
+        $settings = new Settings(self::APP_ID, self::APP_KEY);
 
         $json = $this->getJson(-1);
 
@@ -64,7 +65,7 @@ class SettingsTest extends \PHPUnit_Framework_TestCase
 	{
         $this->testSettingsAccessToken();
 
-        $settings = new Settings(self::APP_ID);
+        $settings = new Settings(self::APP_ID, self::APP_KEY);
 
 		$this->assertEquals($settings->getAccessTokenString(), self::ACCESS_TOKEN);
 		$this->assertEquals($settings->getServiceRoot(), self::SERVICE_ROOT);
