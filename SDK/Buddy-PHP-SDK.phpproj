@@ -27,16 +27,20 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AccessToken.php" />
-    <Compile Include="AccessTokenTest.php" />
-    <Compile Include="BaseTest.php" />
-    <Compile Include="Http.php" />
-    <Compile Include="HttpTest.php" />
-    <Compile Include="Settings.php" />
-    <Compile Include="SettingsTest.php" />
+    <Compile Include="src\AccessToken.php" />
+    <Compile Include="src\Http.php" />
+    <Compile Include="src\Settings.php" />
+    <Compile Include="tests\AccessTokenTest.php" />
+    <Compile Include="tests\HttpTest.php" />
+    <Compile Include="tests\SettingsTest.php" />
+    <Compile Include="tests\TestHelper.php" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="composer.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\DEVSENSE\PHP Tools\VS$(VisualStudioVersion)\Devsense.PHP.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
