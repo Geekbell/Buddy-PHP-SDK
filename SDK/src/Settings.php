@@ -175,7 +175,7 @@ class Settings
     {
         $output = [];
 
-        $matchFound = preg_match("/\/Date\((\d+)\)\//", $dt, $output);
+        preg_match("/\/Date\((\d+)\)\//", $dt, $output);
 
         return $output[1];
     }

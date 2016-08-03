@@ -2,17 +2,12 @@
 
 namespace Buddy;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception;
-
 require_once 'vendor/autoload.php';
 
 class Http
 {
     private $settings;
     private $client;
-
-    private $lastLocation;
 
     const EXCEPTION_NAME = "exception";
     const RESULT_NAME = "result";

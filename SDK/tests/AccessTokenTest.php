@@ -2,8 +2,6 @@
 
 namespace Buddy\Tests;
 
-use Buddy\AccessToken;
-
 require_once "vendor/autoload.php";
 
 class AccessTokenTest extends \PHPUnit_Framework_TestCase
