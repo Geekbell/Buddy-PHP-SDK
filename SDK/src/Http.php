@@ -60,7 +60,7 @@ class Http
     {
         $parser = $this->getParser();
 
-        return $parser->getModel();
+        return method_exists($parser, "getModel") ? $parser->getModel() : "";
     }
 
     private function getParser()
@@ -78,7 +78,7 @@ class Http
     {
         $parser = $this->getParser();
 
-        return $parser->getOS();
+        return method_exists($parser, "getOS") ? $parser->getOS() : "";
     }
 
     private function handleJsonRequests($verb, $path, $dictionary, $file = null)
