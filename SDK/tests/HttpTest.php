@@ -32,7 +32,6 @@ class HttpTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($deviceAccessTokenString);
 	}
 
-
     public function testLoginLogoutUser()
 	{
         $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
@@ -42,6 +41,7 @@ class HttpTest extends \PHPUnit_Framework_TestCase
 
         $userResponse = $http->loginUser("test", "12341234");
         $this->assertNotNull($userResponse);
+        $this->assertStatusOK($userResponse);
         $userAccessTokenString = $http->getAccessTokenString();
         $this->assertTrue($deviceAccessTokenString != $userAccessTokenString);
 
@@ -49,5 +49,48 @@ class HttpTest extends \PHPUnit_Framework_TestCase
         $deviceAccessTokenString2 = $http->getAccessTokenString();
         $this->assertEquals($deviceAccessTokenString, $deviceAccessTokenString2);
 	}
+
+    public function testGet()
+    {
+        $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
+
+        $userResponse = $http->loginUser("test", "12341234");
+        $this->assertStatusOK($userResponse);
+
+        $getResponse = $http->get("/users", []);
+        $this->assertStatusOK($getResponse);
+        $this->assertGreaterThanOrEqual(1, count($getResponse["result"]["pageResults"]));
+    }
+
+    public function testPutPost()
+    {
+        $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
+
+        $userResponse = $http->loginUser("test", "12341234");
+        $this->assertStatusOK($userResponse);
+
+        $key = uniqid();
+
+        $putResponse = $http->put("/metadata/me/" . $key, ["value" => 1, "visibility" => "User"]);
+        $this->assertStatusCreated($putResponse);
+
+        $postResponse = $http->post("/metadata/me/" . $key . "/increment", ["delta" => 2, "visibility" => "User"]);
+        $this->assertStatusOK($postResponse);
+
+        $getResponse = $http->get("/metadata/me/" . $key, ["visibility" => "User"]);
+        $this->assertStatusOK($getResponse);
+
+        $this->assertEquals(3, $getResponse["result"]["value"]);
+    }
+
+    private function assertStatusOK($response)
+    {
+        $this->assertEquals(200, $response["status"]);
+    }
+
+    private function assertStatusCreated($response)
+    {
+        $this->assertEquals(201, $response["status"]);
+    }
 }
 ?>

@@ -40,8 +40,8 @@ class Http
                 "appId" => $this->settings->getAppId(),
                 "appKey" => $this->settings->getAppKey(),
                 "platform" => PHP_OS,
-                "model" => "",
-                "osVersion" => "",
+                "model" => $this->getModel(),
+                "osVersion" => $this->getOsVersion(),
                 "uniqueId" => $this->settings->getUniqueId(),
             ], "verify" => false]);
         }
@@ -56,7 +56,32 @@ class Http
         }
     }
 
-    private function handleDictionaryRequests($verb, $path, $dictionary, $file = null)
+    private function getModel()
+    {
+        $parser = $this->getParser();
+
+        return $parser->getModel();
+    }
+
+    private function getParser()
+    {
+        $settings = array();
+        $settings['additional_paths'] = array();
+
+        $linfo = new \Linfo\Linfo($settings);
+        $linfo->scan();
+
+        return $linfo->getParser();
+    }
+
+    private function getOsVersion()
+    {
+        $parser = $this->getParser();
+
+        return $parser->getOS();
+    }
+
+    private function handleJsonRequests($verb, $path, $dictionary, $file = null)
     {
         $dictionary = ['json' => $dictionary];
 
@@ -70,7 +95,7 @@ class Http
         return $this->handleRequest($verb, $path, $dictionary);
     }
 
-    private function handleParametersRequests($verb, $path, $parameters)
+    private function handleQueryStringRequests($verb, $path, $parameters)
     {
         $dictionary = ['query' => $parameters];
 
@@ -140,27 +165,27 @@ class Http
 
     public function get($path, $parameters)
     {
-        return $this->handleParametersRequests('get', $path, $parameters);
+        return $this->handleQueryStringRequests('get', $path, $parameters);
     }
 
     public function delete($path, $parameters)
     {
-        return $this->handleParametersRequests('delete', $path, $parameters);
+        return $this->handleQueryStringRequests('delete', $path, $parameters);
     }
 
-    public function patch($path, $parameters)
+    public function patch($path, $dictionary)
     {
-        return $this->handleDictionaryRequests('path', $path, $parameters);
+        return $this->handleJsonRequests('patch', $path, $dictionary);
     }
 
-    public function post($path, $parameters)
+    public function post($path, $dictionary)
     {
-        return $this->handleDictionaryRequests('post', $path, $parameters);
+        return $this->handleJsonRequests('post', $path, $dictionary);
     }
 
-    public function put($path, $parameters)
+    public function put($path, $dictionary)
     {
-        return $this->handleDictionaryRequests('put', $path, $parameters);
+        return $this->handleJsonRequests('put', $path, $dictionary);
     }
 
     public function createUser($userName, $password, $firstName=null, $lastName=null, $email=null, $gender=null, $dateOfBirth=null, $tag=null)
