@@ -34,20 +34,27 @@ class HttpTest extends \PHPUnit_Framework_TestCase
 
     public function testLoginLogoutUser()
 	{
-        $http = new Http(new Settings(self::US_APP_ID, self::US_APP_KEY));
+	    $settings = new Settings(self::US_APP_ID, self::US_APP_KEY);
+        $http = new Http($settings);
 
         $deviceAccessTokenString = $http->getAccessTokenString();
         $this->assertNotNull($deviceAccessTokenString);
+        $userToken = $settings->getUserToken();
+        $this->assertNull($userToken);
 
         $userResponse = $http->loginUser("test", "12341234");
         $this->assertNotNull($userResponse);
         $this->assertStatusOK($userResponse);
         $userAccessTokenString = $http->getAccessTokenString();
         $this->assertTrue($deviceAccessTokenString != $userAccessTokenString);
+        $userToken = $settings->getUserToken();
+        $this->assertNotNull($userToken);
 
         $http->logoutUser();
         $deviceAccessTokenString2 = $http->getAccessTokenString();
         $this->assertEquals($deviceAccessTokenString, $deviceAccessTokenString2);
+        $userToken = $settings->getUserToken();
+        $this->assertNull($userToken);
 	}
 
     public function testGet()
